@@ -21,6 +21,9 @@ model_keypoints, model_descriptors = detector.detectAndCompute(model, None)
 
 cap = cv.VideoCapture("./video.mp4")
 
+fourcc = cv.VideoWriter_fourcc(*'mp4v')
+out = cv.VideoWriter('sift.mp4', fourcc, 25.0, (1862, 1200))
+
 logs = []
 
 i = 0
@@ -41,6 +44,8 @@ while cap.isOpened():
     img_matches = np.empty((max(model.shape[0], gray.shape[0]), model.shape[1] + gray.shape[1], 3), dtype=np.uint8)
     cv.drawMatches(model, model_keypoints, gray, frame_keypoints, good_matches, img_matches, flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
 
+    out.write(img_matches)
+
     cv.imshow('Good Matches', img_matches)
 
     if cv.waitKey(1) & 0xFF == ord('q'):
@@ -55,4 +60,5 @@ with open("myfile.txt", "w") as file:
     file.write('\n'.join(logs))
 
 cap.release()
+out.release()
 cv.destroyAllWindows()
